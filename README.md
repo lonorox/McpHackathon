@@ -1,4 +1,4 @@
-# Statistical Assistant
+# GeoStatAI
 
 A Python-based statistical assistant that uses GPT-4 and MCP (Model Context Protocol) to analyze and provide insights on Georgian statistical data. The application processes data scraped from [საქსტატი (Geostat)](https://www.geostat.ge/ka), Georgia's National Statistics Office, and uses advanced AI to provide meaningful analysis and insights from the statistical data.
 
