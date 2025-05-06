@@ -16,7 +16,7 @@ Install the required dependencies:
 pip install -r requirements.txt
 ```
 
-The `requirements.txt` file contains all necessary Python packages for the project. If you need to add new dependencies, you can update the requirements file using:
+The `requirements.txt` file contains all necessary Python packages for the project.
 
 
 ## Configuration
