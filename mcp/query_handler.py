@@ -1,5 +1,4 @@
-from .domain_mapping import DOMAIN_CONTEXT
-
+from domain import DOMAIN_CONTEXT
 
 def query_handler(query, data):
     matches = []

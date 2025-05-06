@@ -2,53 +2,18 @@ import json
 import os
 from dotenv import load_dotenv
 from openai import OpenAI
-
+from domain import DOMAIN_CONTEXT
 load_dotenv()  # loads from .env
 
 # Initialize OpenAI client
 client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
 
 # Valid domains based on your data structure
-DOMAIN_CONTEXT = {
-    "ბიზნეს სექტორი": {
-        "keywords": ["დაქირავებით დასაქმება", "შრომის ანაზღაურება", "ბრუნვა", "დასაქმებულთა რაოდენობა"],
-        "path": ["ბიზნეს სექტორი", "ბიზნეს სექტორი"]
-    },
-    "ბიზნეს რეგისტრი": {
-        "keywords": ["დარეგისტრირებული საწარმო", "ბიზნეს რეგისტრაცია", "საჯარო რეესტრი"],
-        "path": ["ბიზნეს რეგისტრი", "ბიზნეს რეგისტრი"]
-    },
-    "მონეტარული სტატისტიკა": {
-        "keywords": ["ფულის მასა", "მონეტარული აგრეგატები", "დეპოზიტები", "გაცვლითი კურსები"],
-        "path": ["მონეტარული სტატისტიკა", "მონეტარული სტატისტიკა"]
-    },
-    "დასაქმება, ხელფასები": {
-        "keywords": ["დასაქმება", "უმუშევრობა", "ხელფასი", "შრომა", "შრომის ბაზარი"],
-        "path": ["დასაქმება, ხელფასები", "დასაქმება, ხელფასები"]
-    },
-    "გარემოს სტატისტიკა": {
-        "keywords": ["გარემოს დაცვა", "ემისიები", "წყლის მოხმარება", "ნარჩენები"],
-        "path": ["გარემოს სტატისტიკა", "გარემოს სტატისტიკა"]
-    },
-    "განათლება, მეცნიერება, კულტურა,  სპორტი": {
-        "keywords": ["განათლება", "მოსწავლეთა რაოდენობა", "უნივერსიტეტი", "სპორტი", "კულტურა", "მეცნიერება"],
-        "path": ["განათლება, მეცნიერება, კულტურა,  სპორტი", "განათლება, მეცნიერება, კულტურა,  სპორტი"]
-    },
-    "ეროვნული ანგარიშები": {
-        "keywords": ["მშპ", "ეროვნული ანგარიში", "ეკონომიკური ზრდა", "სახარჯო სტრუქტურა"],
-        "path": ["ეროვნული ანგარიშები", "ეროვნული ანგარიშები"]
-    },
-    "მომსახურების სტატისტიკა": {
-        "keywords": ["სერვისი", "მომსახურება", "სატრანსპორტო მომსახურება", "ტურისტული მომსახურება"],
-        "path": ["მომსახურების სტატისტიკა", "მომსახურების სტატისტიკა"]
-    }
-}
+
 
 
 def call_gpt4(prompt: str, model="gpt-4", temperature=0.3):
-    """
-    Call OpenAI GPT-4 with the new SDK syntax.
-    """
+
     response = client.chat.completions.create(
         model=model,
         temperature=temperature,
@@ -65,7 +30,6 @@ def query_handler(data, path):
     """
     Navigate through the data structure following the given path
     """
-    # Find the top-level category that matches the first part of the path
     target_category = None
     for category in data:
         if category.get("name") == path[0]:
@@ -137,13 +101,8 @@ def llm_full_pipeline(user_query: str, raw_data, llm=call_gpt4):
     კითხვა: "{user_query}"
     """
 
-    # domain_response = llm(domain_prompt).strip().lower()
     domain_response = llm(domain_prompt).strip().lower().strip('"')
 
-    # domain_response = llm(domain_prompt).strip().lower()
-    # domain_response = llm(domain_prompt).strip().lower()
-    # print(domain_response)
-    # Normalize and validate
     response_parts = [part.strip() for part in domain_response.split("__")]
     print(response_parts)
     matched_domain = [
@@ -159,13 +118,9 @@ def llm_full_pipeline(user_query: str, raw_data, llm=call_gpt4):
 
     # Step 2: Retrieve domain data
 
-    # path = DOMAIN_CONTEXT[matched_domain]["path"]
-    # raw_result = query_handler(data, path)
-
-    # Extract tables and charts from deep structure
     all_tables, all_charts = [],[]
     for domain in matched_domain:
-        path = DOMAIN_CONTEXT[domain]["path"]
+        path =DOMAIN_CONTEXT[domain]["path"]
         raw_result = query_handler(data, path)
         tables, charts = extract_tables_and_charts(raw_result)
         all_tables.extend(tables)
@@ -203,15 +158,3 @@ def llm_full_pipeline(user_query: str, raw_data, llm=call_gpt4):
         "analysis": analysis.strip()
     }
 
-
-# # Example usage
-# if __name__ == "__main__":
-#     # Load the data from a file or variable
-#     sample_query = "როგორია ბიზნეს სექტორის ბრუნვის ტენდენცია ბოლო წლებში?"
-#
-#     # You would load your actual data here
-#     with open("data.json", "r", encoding="utf-8") as f:
-#         sample_data = json.load(f)
-#
-#     result = llm_full_pipeline(sample_query, sample_data)
-#     json.dumps(result, ensure_ascii=False, indent=2)

@@ -1,10 +1,11 @@
 
 from llm.llm import llm_full_pipeline, call_gpt4
 import json
+
 def handle_user_query(query, llm, data):
     return llm_full_pipeline(query, data, llm)
 def load_data():
-    with open("../hackathoMCP/data/scraped_data_mcp1.json", "r", encoding="utf-8") as f:
+    with open("data/scraped_data_mcp1.json", "r", encoding="utf-8") as f:
         return json.load(f)
 
 def main():

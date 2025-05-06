@@ -1,6 +1,4 @@
-class Domain:
-    def __init__(self):
-        self._data = DOMAIN_CONTEXT = {
+DOMAIN_CONTEXT = {
             "ბიზნეს სექტორი": {
                 "keywords": ["დაქირავებით დასაქმება", "შრომის ანაზღაურება", "ბრუნვა", "დასაქმებულთა რაოდენობა"],
                 "path": ["ბიზნეს სექტორი", "ბიზნეს სექტორი"]
@@ -34,7 +32,3 @@ class Domain:
                 "path": ["მომსახურების სტატისტიკა", "მომსახურების სტატისტიკა"]
             }
         }
-    def getDomains(self):
-        return self._data
-
-
