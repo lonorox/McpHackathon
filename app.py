@@ -1,5 +1,5 @@
 
-from llm.llm import llm_full_pipeline, call_gpt4
+from llm.llm import llm_full_pipeline, call_gpt4,call_ollama
 import json
 
 def handle_user_query(query, llm, data):
@@ -19,7 +19,8 @@ def main():
                 print("👋 ნახვამდის!")
                 break
 
-            result = handle_user_query(query, call_gpt4, data)
+            # result = handle_user_query(query, call_gpt4, data)
+            result = handle_user_query(query,call_ollama,data)
             print(f"\n📌 {result['title']}")
             print(f"\n📊 მონაცემები ({len(result['raw_table'])} ჩანაწერი):")
             # print(json.dumps(result["raw_table"], indent=2, ensure_ascii=False))
