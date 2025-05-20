@@ -4,13 +4,12 @@ from dotenv import load_dotenv
 from openai import OpenAI
 from domain import DOMAIN_CONTEXT
 load_dotenv()  # loads from .env
+import requests
 
 # Initialize OpenAI client
 client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
 
 # Valid domains based on your data structure
-
-
 
 def call_gpt4(prompt: str, model="gpt-4", temperature=0.3):
 
@@ -25,7 +24,23 @@ def call_gpt4(prompt: str, model="gpt-4", temperature=0.3):
     )
     return response.choices[0].message.content.strip()
 
+def call_ollama(prompt: str, model="llama3:8b", temperature=0.3):
+    response = requests.post(
+        "http://localhost:11434/api/generate",
+        json={
+            "model": model,
+            "prompt": prompt,
+            "temperature": temperature,
+            "stream": False
+        },
+        timeout=60
+    )
 
+    if response.status_code == 200:
+        result = response.json()
+        return result.get("response", "").strip()
+    else:
+        return f"შეცდომა ollama-ს მოთხოვნისას: {response.status_code} - {response.text}"
 def query_handler(data, path):
     """
     Navigate through the data structure following the given path
@@ -147,6 +162,7 @@ def llm_full_pipeline(user_query: str, raw_data, llm=call_gpt4):
     {"შესაბამისი დიაგრამები:" + json.dumps(charts[0], ensure_ascii=False, indent=2) if charts else ""}
 
     გააკეთე ანალიზი და დასკვნა, ქართულად. მოიყვანე კონკრეტული რიცხვები და ტენდენციები.
+    Then translate your full answer into Georgian.
     """
 
     analysis = llm(analysis_prompt)
